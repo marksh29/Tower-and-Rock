@@ -9,12 +9,12 @@ public class Tower : MonoBehaviour
     { 
        Player, Enemy, Neutral
     }
-
     public towerState _state;
     [Header("----Tower Parametrs----")]
     public int floorCount;
     public int countPerLevel, startFloor;
     public bool stickman;
+
     [Header("----Game----")]
     public int count;
     public int maxCount;
@@ -29,6 +29,7 @@ public class Tower : MonoBehaviour
     [Header("----Fire Controll----")]
     public TowerFire towerFire;
     public float startRadius, addRadius, fireTimer;
+
     [Header("----Drop Money----")]
     [SerializeField] GameObject moneyPrefab;
     [SerializeField] float dropTimer;
@@ -36,6 +37,11 @@ public class Tower : MonoBehaviour
     [SerializeField] List<GameObject> moneyList;
     float dTime;
 
+    [Header("----------Host Spawner----------")]
+    [SerializeField] float spawnTimer;
+    [SerializeField] GameObject hostPrefab;
+    [SerializeField] Transform spawnPosition;
+    float timer;
     private void Awake()
     {
         maxCount = floorCount * countPerLevel;
@@ -66,14 +72,41 @@ public class Tower : MonoBehaviour
     }
     void Update()
     {
-        if(Controll.Instance._state == "Game" && _state == towerState.Player)
+        if(Controll.Instance._state == "Game")
         {
-            dTime -= Time.deltaTime;
-            if(dTime <= 0)
+            if (_state == towerState.Player)
             {
-                dTime = dropTimer;
-                StartCoroutine(DropMoney());
+                dTime -= Time.deltaTime;
+                if (dTime <= 0)
+                {
+                    dTime = dropTimer;
+                    StartCoroutine(DropMoney());
+                }
             }
+
+            if (_state == towerState.Player || _state == towerState.Enemy)
+            {
+                timer -= Time.deltaTime;
+                if(timer <= 0)
+                {
+                    timer = spawnTimer;
+                    SpawnHost();
+                }
+            }
+        }
+    }
+
+    void SpawnHost()
+    {
+        GameObject obj = PoolControll.Instance.Spawn("Host");        
+        obj.transform.position = spawnPosition.position;
+        if(_state == towerState.Player)
+        {
+            Player.Instance.AddHost(obj);
+        }
+        else
+        {
+            Enemy.Instance.AddHost(obj);
         }
     }
 

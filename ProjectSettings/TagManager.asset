@@ -12,6 +12,7 @@ TagManager:
   - Money
   - BoostMoney
   - Spawner
+  - MovePosition
   layers:
   - Default
   - TransparentFX

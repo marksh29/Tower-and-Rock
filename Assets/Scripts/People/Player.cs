@@ -21,25 +21,29 @@ public class Player : MonoBehaviour
     }
     [Header("-------Camera-------")]
     [SerializeField] CinemachineVirtualCamera cam;
-    [SerializeField] float camScaleAdd, camScale;
-      
+    [SerializeField] float camScaleAdd, camScale;    
     public gameplayType _gameplay;
+
     [Header("-------Joystic-------")]    
     public joystickType _joystick;
     public Rigidbody _rigidbody;
     [SerializeField] private FixedJoystick _joystickS;
     [SerializeField] private DynamicJoystick _joystickD;
+
     [Header("-------Player-------")]
     [SerializeField] private float _moveSpeed;
-
     public bool move;
+
     [Header("-------Line-------")]
     [SerializeField] int _lineWidth;
+    [SerializeField] int startCount;
+    [SerializeField] GameObject hostPrefab;
     public List<GameObject> _hostageList;
     [SerializeField] Transform[] _hostPos;
     [SerializeField] SkinnedMeshRenderer body;
     [SerializeField] Material[] bodyMaterial;
     Vector3 oldPositions;
+
     [Header("-------Big-------")]
     public int life;
     [SerializeField] float addScale, maxScale, attackTime;
@@ -71,7 +75,21 @@ public class Player : MonoBehaviour
     {
         scaleLife = (int)((maxScale - 1) / addScale);
         SetAnimation("stay");
-        //hostCountText.text = _hostageList.Count > 0 ? _hostageList.Count.ToString() : "1";
+
+        for (int i = 0; i < startCount; i++)
+        {
+            GameObject obj = PoolControll.Instance.Spawn("Host");
+            switch (_gameplay)
+            {
+                case (gameplayType.Line):
+                    AddHost(obj);
+                    break;
+                case (gameplayType.Big):
+                    obj.GetComponent<Hostage>().Destroy();
+                    AddScale();
+                    break;
+            }
+        }
     }
     private void FixedUpdate()
     {

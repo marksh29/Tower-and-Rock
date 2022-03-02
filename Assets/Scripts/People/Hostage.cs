@@ -42,9 +42,9 @@ public class Hostage : MonoBehaviour
     {
         if(Controll.Instance._state == "Game")
         {
-            if (move && !tower && (transform.position - _target.position).sqrMagnitude > 0.2f)
+            if (!tower) // && move)
             {
-                if (_state != "stay")
+                if ((transform.position - _target.position).sqrMagnitude > 0.2f && _state != "stay")
                 {
                     GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
                     relativePos = new Vector3(_target.position.x, _target.position.y, _target.position.z) - transform.position;
@@ -52,7 +52,10 @@ public class Hostage : MonoBehaviour
                     transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, _rotateSpeed * Time.deltaTime);
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(_target.position.x, _target.position.y, _target.position.z), speed * Time.deltaTime);
                 }
-            }
+                else
+                    SetState("stay");
+            }            
+
             if (tower)
             {
                 relativePos = new Vector3(_target.position.x, _target.position.y, _target.position.z) - transform.position;
@@ -160,7 +163,7 @@ public class Hostage : MonoBehaviour
                 transform.GetChild(3).gameObject.tag = "Untagged";
                 transform.GetChild(3).gameObject.SetActive(false);
 
-                transform.position = _target.position;
+                //transform.position = _target.position;
                 break;
             case ("Enemy"):
                 speed = enemySpeed;
@@ -199,7 +202,7 @@ public class Hostage : MonoBehaviour
                 transform.GetChild(3).gameObject.tag = "Untagged";
                 transform.GetChild(3).gameObject.SetActive(false);
 
-                transform.position = _target.position;
+                //transform.position = _target.position;
                 break;
         }       
     }
